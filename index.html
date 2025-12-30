@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Para Ti 💜</title>
+
+<style>
+body{
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial;
+background:linear-gradient(135deg,#d8b4fe,#a78bfa,#7c3aed);
+}
+
+.card{
+background:rgba(255,255,255,.2);
+padding:30px;
+border-radius:25px;
+width:90%;
+max-width:420px;
+text-align:center;
+backdrop-filter:blur(12px);
+box-shadow:0 20px 50px rgba(0,0,0,.3);
+position:relative;
+}
+
+h2{color:white}
+
+label{
+color:white;
+display:block;
+text-align:left;
+margin-top:15px;
+}
+
+input{
+width:100%;
+padding:10px;
+border-radius:10px;
+border:none;
+margin-top:5px;
+outline:none;
+}
+
+.error{
+color:#ff4d6d;
+font-size:13px;
+display:none;
+text-align:left;
+margin-top:3px;
+}
+
+button{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:25px;
+font-size:16px;
+cursor:pointer;
+user-select:none;
+}
+
+#loginBtn{background:#7c3aed;color:white}
+
+.buttons{
+display:flex;
+justify-content:space-around;
+margin-top:25px;
+position:relative;
+}
+
+#yes{
+background:#22c55e;
+color:white;
+z-index:10;
+position:relative;
+}
+
+#no{
+background:#ef4444;
+color:white;
+position:absolute;
+right:50px;
+top:0;
+z-index:20;
+}
+
+.gallery img{
+width:100%;
+border-radius:15px;
+margin-top:10px;
+}
+
+.final{
+display:none;
+background:white;
+padding:30px;
+border-radius:25px;
+position:relative;
+overflow:hidden;
+}
+
+.final h3{
+color:#7c3aed;
+font-size:24px;
+}
+
+.final p{
+color:#444;
+font-size:18px;
+}
+
+.heart{
+position:absolute;
+font-size:22px;
+animation:float 4s infinite;
+opacity:0;
+}
+
+@keyframes float{
+0%{transform:translateY(100px);opacity:0}
+50%{opacity:1}
+100%{transform:translateY(-150px);opacity:0}
+}
+
+/* Estilo alerta mensaje cuando se mueve botón No */
+#alertMessage {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(124, 58, 237, 0.9);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  user-select: none;
+  width: fit-content;
+  max-width: 80%;
+  text-align: center;
+  z-index: 30;
+}
+#alertMessage.show {
+  opacity: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="login">
+<h2>Inicia sesión 💜</h2>
+
+<label>Usuario</label>
+<input id="user" autocomplete="off">
+<div class="error" id="userError">Usuario incorrecto</div>
+
+<label>Contraseña</label>
+<input type="password" id="pass" autocomplete="off">
+<div class="error" id="passError">Contraseña incorrecta</div>
+
+<button id="loginBtn" onclick="login()">Entrar</button>
+</div>
+
+<div class="card" id="question" style="display:none; position:relative;">
+<h2>¿Aceptas amarme para toda la vida?💜 </h2>
+
+<div class="gallery">
+<img src="img1.jpg" alt="Imagen 1">
+<img src="img2.jpg" alt="Imagen 2">
+<img src="img3.jpg" alt="Imagen 3">
+<img src="img4.jpg" alt="Imagen 4">
+</div>
+
+<div class="buttons">
+<button id="yes" onclick="yes()">Sí </button>
+<button id="no">No </button>
+<div id="alertMessage"></div>
+</div>
+</div>
+
+<div class="card final" id="final">
+<h3>Sabía que dirías que sí. Te amo mi amorcito lindo💜</h3>
+<p>  
+✨</p>
+</div>
+
+<script>
+const USER="criss";
+const PASS="01042023";
+let noCount=0;
+
+const msgs=[
+"¿Estás seguro?🥺",
+"¿De verdad no me quieres?💔",
+"Más vale que digas que sí😌",
+"Es tu última advertencia😤",
+"Aquí no hay opción, es SÍ o SÍ"
+];
+
+const userError=document.getElementById("userError");
+const passError=document.getElementById("passError");
+const user=document.getElementById("user");
+const pass=document.getElementById("pass");
+const login=document.getElementById("login");
+const question=document.getElementById("question");
+const final=document.getElementById("final");
+const noBtn=document.getElementById("no");
+const alertMessage=document.getElementById("alertMessage");
+const yesBtn=document.getElementById("yes");
+
+function login(){
+  userError.style.display="none";
+  passError.style.display="none";
+  let ok=true;
+  if(user.value!==USER){
+    userError.style.display="block";
+    ok=false;
+  }
+  if(pass.value!==PASS){
+    passError.style.display="block";
+    ok=false;
+  }
+  if(ok){
+    login.style.display="none";
+    question.style.display="block";
+  }
+}
+
+// Manejo del botón NO
+noBtn.addEventListener("mouseover", handleNo);
+noBtn.addEventListener("touchstart", handleNo);
+
+function handleNo(){
+  if(noCount < msgs.length){
+    showAlert(msgs[noCount]);
+  } else {
+    showAlert("Es sí o sí 🙈");
+  }
+  moveNoButton();
+  noCount++;
+}
+
+function moveNoButton(){
+  // Movimiento dentro del contenedor .buttons
+  const container = noBtn.parentElement;
+  const maxX = container.clientWidth - noBtn.offsetWidth;
+  const maxY = container.clientHeight - noBtn.offsetHeight;
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+  noBtn.style.position = "absolute";
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+// Mostrar alerta bonita y temporal
+let alertTimeout;
+function showAlert(text){
+  alertMessage.innerText = text;
+  alertMessage.classList.add("show");
+  clearTimeout(alertTimeout);
+  alertTimeout = setTimeout(()=>{
+    alertMessage.classList.remove("show");
+  }, 2000);
+}
+
+function yes(){
+  question.style.display="none";
+  final.style.display="block";
+
+  for(let i=0;i<25;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💜";
+    h.style.left=Math.random()*100+"%";
+    h.style.animationDelay=Math.random()*4+"s";
+    final.appendChild(h);
+  }
+}
+</script>
+
+</body>
+  </html>
